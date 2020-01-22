@@ -9,26 +9,26 @@ namespace ContractGenerator.Controllers
     [ApiController]
     public class GenerateContractController : ControllerBase
     {
-        private TemplateStorage _templateStorage;
+        private readonly TemplateStorage _templateStorage;
 
-        public GenerateContractController(TemplateStorage templateStorage)
-        {
-            _templateStorage = templateStorage;
-        }
+        public GenerateContractController(TemplateStorage templateStorage) => _templateStorage = templateStorage;
 
         [HttpGet]
+        [HttpPost]
         public IActionResult Get()
         {
-            var asdasd = HttpContext.Request.Query;
+            if (HttpContext.Request.Query.Count == 0)
+                return BadRequest();
+
             IContentItem[] fillItems = HttpContext.Request.Query
                 .Select(kvp => new FieldContent(kvp.Key, kvp.Value))
                 .Cast<IContentItem>().ToArray();
-            
+
             var valuesToFill = new Content(fillItems);
-            
+
             var stream = new MemoryStream();
             stream.Write(_templateStorage.TemplateBytes);
-            
+
             using var output = new TemplateProcessor(stream);
             output.FillContent(valuesToFill).SaveChanges();
 

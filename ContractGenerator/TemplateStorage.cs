@@ -1,10 +1,11 @@
-﻿namespace ContractGenerator
+﻿using System.IO;
+
+namespace ContractGenerator
 {
     public class TemplateStorage
-    {       
-        public byte[] TemplateBytes { get; }
+    {
+        public TemplateStorage(string path) => TemplateBytes = File.ReadAllBytes("template.docx");
 
-        public TemplateStorage(string path) => 
-            TemplateBytes = System.IO.File.ReadAllBytes("template.docx");
+        public byte[] TemplateBytes { get; }
     }
 }
